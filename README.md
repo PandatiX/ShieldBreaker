@@ -52,3 +52,10 @@ TODO
 TODO for the current version are in the `Main` class.
 
 Gamma version will permit the ShieldBreaker to work in a distributed system, and will be generalisable (not restrained to Brute Force and IDOR attacks).
+
+Known plugins
+-------------
+
+ - [SymfonyPlugin][1]
+ 
+ [1]: https://github.com/PandatiX/ShieldBreaker-SymfonyPlugin
