@@ -60,10 +60,6 @@ public class BaseParameterManagerPanel extends JPanel {
         JLabel label;
         JTextField textField;
         for (String o : opt) {
-            //Avoid displaying protocol again
-            if (o.contains("protocol"))
-                continue;
-
             //Build label
             label = new JLabel(o);
             c.gridx = 0;
