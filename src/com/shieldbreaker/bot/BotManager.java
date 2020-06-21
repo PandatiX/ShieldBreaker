@@ -3,10 +3,7 @@ package com.shieldbreaker.bot;
 import com.shieldbreaker.cli.ParametersManager;
 import com.shieldbreaker.kernel.ShieldBreaker;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -83,7 +80,10 @@ public abstract class BotManager {
         passwords = new ArrayList<>();
 
         try {
-            InputStream is = Files.newInputStream(Paths.get(passlist));
+            File f = new File(passlist);
+            if (!f.exists())
+                throw new FileNotFoundException();
+            InputStream is = Files.newInputStream(f.toPath());
             BufferedReader buf = new BufferedReader(new InputStreamReader(is));
 
             String line;
@@ -91,6 +91,8 @@ public abstract class BotManager {
                 if (!passwords.contains(line) && !line.isEmpty())
                     passwords.add(line);
             }
+        } catch (FileNotFoundException e) {
+            shieldBreaker.err("The specified file to use as a passlist seems not to exists. Please check [" + passlist + "].", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
         } catch (IOException e) {
             shieldBreaker.err("A fatal IOException was thrown while parsing " + passlist + ".", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
         }
