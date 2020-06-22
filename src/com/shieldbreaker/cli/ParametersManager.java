@@ -19,15 +19,12 @@ public class ParametersManager {
     private final Options options;
     private final List<BaseParametersManager> parametersManagers;
 
-    private String DOMAIN;
-    private String COOKIE;
-    private String PASSLIST;
-    private String ACCOUNT;
     private int NBTHREADS;
 
     public ParametersManager(String[] args, boolean GUI) {
-        this.GUI = GUI;
         this.args = args;
+        this.GUI = GUI;
+
         options = new Options();
         parametersManagers = new ArrayList<>();
     }
@@ -70,24 +67,6 @@ public class ParametersManager {
         help.setRequired(false);
         options.addOption(help);
 
-        Option domain = new Option("d", "domain", true, "Symfony-login-based domain to brute force." + graphicalMessage);
-        domain.setArgName("URL");
-        domain.setRequired(!GUI);
-        options.addOption(domain);
-
-        Option cookie = new Option("c", "cookie", true, "Cookie to use (if no PHPSESSID, won't work). Notice its necessary due to the Symfony auth process.");
-        cookie.setRequired(false);
-        options.addOption(cookie);
-
-        Option passlist = new Option("f", "file", true, "Path to the password list." + graphicalMessage);
-        passlist.setArgName("FILE");
-        passlist.setRequired(!GUI);
-        options.addOption(passlist);
-
-        Option account = new Option("a", "account", true, "Account to test for." + graphicalMessage);
-        account.setRequired(!GUI);
-        options.addOption(account);
-
         Option threads = new Option("t", "threads", true, "Set the number of (JAVA) threads to work on. Default is 1.");
         threads.setArgName("n");
         threads.setRequired(false);
@@ -113,10 +92,6 @@ public class ParametersManager {
             cmd = parser.parse(options, args);
 
             //Set all parameters
-            setDOMAIN(cmd.getOptionValue("domain", ""));
-            setCOOKIE(cmd.getOptionValue("cookie", ""));
-            setPASSLIST(cmd.getOptionValue("file", ""));
-            setACCOUNT(cmd.getOptionValue("account", ""));
             setNBTHREADS(cmd.getOptionValue("threads", Integer.toString(defaultNbThreads)));
             List<String> keys;
             for (BaseParametersManager p : parametersManagers) {
@@ -136,18 +111,6 @@ public class ParametersManager {
         formatter.printHelp("ShieldBreaker", "\n", options, footer, true);
     }
 
-    public String getDOMAIN() {
-        return DOMAIN;
-    }
-    public String getCOOKIE() {
-        return COOKIE;
-    }
-    public String getPASSLIST() {
-        return PASSLIST;
-    }
-    public String getACCOUNT() {
-        return ACCOUNT;
-    }
     public int getNBTHREADS() {
         return NBTHREADS;
     }
@@ -160,18 +123,6 @@ public class ParametersManager {
         throw new IllegalArgumentException();
     }
 
-    public void setDOMAIN(String domain) {
-        DOMAIN = domain;
-    }
-    public void setCOOKIE(String cookie) {
-        COOKIE = cookie;
-    }
-    public void setPASSLIST(String passlist) {
-        PASSLIST = passlist;
-    }
-    public void setACCOUNT(String account) {
-        ACCOUNT = account;
-    }
     public void setNBTHREADS(String nbthreads) {
         setNBTHREADS(nbthreads.matches("\\d+") ? Integer.parseInt(nbthreads) : defaultNbThreads);
     }

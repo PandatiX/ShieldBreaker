@@ -9,13 +9,11 @@ public abstract class Bot implements Runnable {
     protected final ShieldBreaker shieldBreaker;
     protected final ParametersManager parametersManager;
     protected final BotManager manager;
-    protected final List<String> passwords;
 
-    protected Bot(BotManager manager, List<String> passwords) {
+    protected Bot(BotManager manager) {
         shieldBreaker= ShieldBreaker.getInstance();
         parametersManager = shieldBreaker.getParametersManager();
         this.manager = manager;
-        this.passwords = passwords;
     }
 
     protected void doneCheck() {

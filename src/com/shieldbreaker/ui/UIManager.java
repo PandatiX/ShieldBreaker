@@ -96,11 +96,7 @@ public class UIManager extends JFrame {
         c.gridwidth = 2;
         c.gridheight = 1;
         start.addActionListener(actionEvent -> {
-            parametersManager.setDOMAIN(parametersManagerPanel.getDomain());
-            parametersManager.setCOOKIE(parametersManagerPanel.getCookie());
-            parametersManager.setACCOUNT(parametersManagerPanel.getAccount());
             parametersManager.setNBTHREADS(parametersManagerPanel.getNbThreads());
-
             bPMP.setValues();
 
             if (terminal != null)

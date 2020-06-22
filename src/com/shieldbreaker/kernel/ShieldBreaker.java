@@ -37,7 +37,7 @@ public class ShieldBreaker {
     private ShieldBreaker(String[] args) {
         configLoader = ConfigLoader.getInstance();
 
-        System.out.println(LOGO + "\nThis script is a POC of a Brute Force attack framework\nVersion: " + configLoader.getVersion());
+        System.out.println(LOGO + "\nThe ShieldBreaker is a POC of a plugin-based framework to simplify attacks simulations.\nVersion: " + configLoader.getVersion());
 
         //Check GUI parameter
         boolean g = false;

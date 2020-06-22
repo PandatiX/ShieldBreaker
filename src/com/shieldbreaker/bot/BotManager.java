@@ -15,48 +15,50 @@ public abstract class BotManager {
     protected final ShieldBreaker shieldBreaker;
     protected final ParametersManager parametersManager;
 
-    protected List<String> passwords;
     protected List<Bot> bots;
     private volatile boolean found;
-    private volatile int donePass;
+    private int progressMax;
+    private volatile int doneProgress;
 
     public BotManager() {
         shieldBreaker = ShieldBreaker.getInstance();
         parametersManager = shieldBreaker.getParametersManager();
-
-        loadPasswords(parametersManager.getPASSLIST());
     }
 
     public abstract void displayStart();
 
     public void startBots(Class<? extends Bot> botClass) {
         displayStart();
+
+        System.out.println("SPY2");
+
         bots = new ArrayList<>();
         found = false;
 
-        int passSize = passwords.size();
-        int realNbThreads = Math.min(parametersManager.getNBTHREADS(), passSize);
-        int width = passSize/realNbThreads;
-
+        int nbBots = parametersManager.getNBTHREADS();
         try {
-            //Split passwords in ~equals sizes
-            for (int i = 0; i < realNbThreads - 1; i++) {
-                startBot(botClass, i*width, (i+1)*width);
+            for (int i = 0; i < nbBots; i++) {
+                startBot(botClass);
             }
-            startBot(botClass, (realNbThreads-1)*width, passSize);
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            shieldBreaker.err("A fatal error occured while starting bots.", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            shieldBreaker.err("A fatal error occurred while starting bots.", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
             System.exit(1);
         }
     }
 
+    public synchronized void setProgressMax(int max) {
+        progressMax = max > 0 ? max : 1;
+        doneProgress = Math.min(doneProgress, progressMax);
+    }
+
     public void setFound(boolean found) {
         this.found = found;
-        donePass = passwords.size();
+        if (found)
+            doneProgress = progressMax;
     }
 
     public synchronized void doneCheck() {
-        donePass++;
+        doneProgress++;
     }
 
     public boolean isFound() {
@@ -64,37 +66,15 @@ public abstract class BotManager {
     }
 
     public int getProgress() {
-        int passSize = passwords.size();
-        return passSize > 0 ? 100 * donePass / passwords.size() : 100;
+        return 100 * doneProgress / progressMax;
     }
 
-    private void startBot(Class<? extends Bot> botClass, int inf, int sup) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        Constructor<? extends Bot> constructor = botClass.getDeclaredConstructor(BotManager.class, List.class);
+    protected Bot startBot(Class<? extends Bot> botClass) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        Constructor<? extends Bot> constructor = botClass.getDeclaredConstructor(BotManager.class);
         constructor.setAccessible(true);
-        Bot bot = constructor.newInstance(this, passwords.subList(inf, sup));
+        Bot bot = constructor.newInstance(this);
         this.bots.add(bot);
         new Thread(bot).start();
-    }
-
-    private void loadPasswords(String passlist) {
-        passwords = new ArrayList<>();
-
-        try {
-            File f = new File(passlist);
-            if (!f.exists())
-                throw new FileNotFoundException();
-            InputStream is = Files.newInputStream(f.toPath());
-            BufferedReader buf = new BufferedReader(new InputStreamReader(is));
-
-            String line;
-            while ((line = buf.readLine()) != null) {
-                if (!passwords.contains(line) && !line.isEmpty())
-                    passwords.add(line);
-            }
-        } catch (FileNotFoundException e) {
-            shieldBreaker.err("The specified file to use as a passlist seems not to exists. Please check [" + passlist + "].", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
-        } catch (IOException e) {
-            shieldBreaker.err("A fatal IOException was thrown while parsing " + passlist + ".", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
-        }
+        return bot;
     }
 }
