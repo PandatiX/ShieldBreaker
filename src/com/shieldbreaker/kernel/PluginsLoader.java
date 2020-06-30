@@ -16,7 +16,7 @@ import java.util.jar.JarFile;
 public class PluginsLoader {
     private String[] files;
 
-    private final List<Class> plugins;
+    private final List<Class<BasePlugin>> plugins;
 
     public PluginsLoader() {
         plugins = new ArrayList<>();
@@ -31,8 +31,8 @@ public class PluginsLoader {
 
         List<BasePlugin> tmpPlugins = new ArrayList<>();
 
-        for (Class plugin : plugins) {
-            tmpPlugins.add((BasePlugin) (plugin.newInstance()));
+        for (Class<BasePlugin> plugin : plugins) {
+            tmpPlugins.add(plugin.newInstance());
         }
 
         return tmpPlugins;
@@ -54,7 +54,7 @@ public class PluginsLoader {
         //For jar archive content
         Enumeration<JarEntry> enumeration;
         //To determine implemented interfaces
-        Class tmpClass;
+        Class<?> tmpClass;
 
         for (int i = 0; i < f.length; i++) {
             f[i] = new File(files[i]);
@@ -83,9 +83,10 @@ public class PluginsLoader {
 
                     tmpClass = Class.forName(tmp, true, loader);
 
-                    for (int y = 0; y < tmpClass.getInterfaces().length; y++) {
+                    int length = tmpClass.getInterfaces().length;
+                    for (int y = 0; y < length; y++) {
                         if (tmpClass.getInterfaces()[y].getName().equals("com.shieldbreaker.kernel.BasePlugin")) {
-                            plugins.add(tmpClass);
+                            plugins.add((Class<BasePlugin>) tmpClass);
                         }
                     }
                 }

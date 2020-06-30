@@ -74,9 +74,12 @@ public class ShieldBreaker {
 
     public void startBotManager() {
         try {
+            parametersManager.checkParameters();
             plugin.getClassBotManager().newInstance().startBots(plugin.getClassBot());
         } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
+            err("Cannot start " + plugin.getClass() + ": " + e.getMessage(), OUT_PRIORITY.IMPORTANT);
+        } catch (Exception e) {
+            err(e.getMessage(), OUT_PRIORITY.IMPORTANT);
         }
     }
 
@@ -116,6 +119,9 @@ public class ShieldBreaker {
 
     public BasePlugin getPlugin() {
         return plugin;
+    }
+    public UIManager getUIManager() {
+        return uiManager;
     }
 
     public ParametersManager getParametersManager() {

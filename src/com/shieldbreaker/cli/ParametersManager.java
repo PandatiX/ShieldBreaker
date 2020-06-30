@@ -129,7 +129,7 @@ public class ParametersManager {
     public void setNBTHREADS(int nbthreads) {
         NBTHREADS = (nbthreads > 0 ? nbthreads : defaultNbThreads);
     }
-    public void setValue(String key, String value) {
+    public void setValue(String key, String value) throws IllegalArgumentException {
         for (BaseParametersManager bp : parametersManagers) {
             try {
                 bp.setValue(key, value);
@@ -137,5 +137,12 @@ public class ParametersManager {
             } catch (IllegalArgumentException ignored) {}
         }
         throw new IllegalArgumentException();
+    }
+
+    public void checkParameters() throws Exception {
+        //Check for plugins parameters
+        for (BaseParametersManager p : parametersManagers) {
+            p.checkParameters();
+        }
     }
 }

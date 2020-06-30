@@ -106,7 +106,7 @@ public class UIManager extends JFrame {
         });
         add(start, c);
 
-        //End ui setup
+        //End UI setup
         pack();
         setVisible(true);
         setLocationRelativeTo(null);

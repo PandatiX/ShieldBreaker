@@ -59,6 +59,8 @@ public abstract class BotManager {
 
     public synchronized void doneCheck() {
         doneProgress++;
+        if (doneProgress == progressMax)
+            shieldBreaker.out("Finished running", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
     }
 
     public boolean isFound() {

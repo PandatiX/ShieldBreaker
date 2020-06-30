@@ -1,5 +1,6 @@
 package com.shieldbreaker.cli;
 
+import com.shieldbreaker.cli.type.BaseType;
 import com.sun.istack.internal.NotNull;
 import org.apache.commons.cli.Option;
 
@@ -16,15 +17,15 @@ public abstract class BaseParametersManager {
         createCliOptions();
     }
 
-    protected void addOption(@NotNull Option o, @NotNull String defaultValue, @NotNull ParametersManager.KEYS key) {
+    protected void addOption(@NotNull Option o, @NotNull String defaultValue, @NotNull ParametersManager.KEYS key, @NotNull BaseType type) {
         if (getOV(o.getLongOpt()) == null) {
-            options.add(new OptionValueParameter(o, defaultValue, key));
+            options.add(new OptionValueParameter(o, defaultValue, key, type));
         } else
             throw new IllegalArgumentException();
     }
 
-    protected void addOption(Option o, ParametersManager.KEYS key) {
-        addOption(o, "", key);
+    protected void addOption(Option o, ParametersManager.KEYS key, BaseType type) {
+        addOption(o, "", key, type);
     }
 
     protected abstract void createCliOptions();
@@ -41,13 +42,6 @@ public abstract class BaseParametersManager {
 
     public List<OptionValueParameter> getOptions() {
         return options;
-    }
-    public List<String> getOptionsLongOpt() {
-        List<String> optionsLongOpt = new ArrayList<>();
-        for (OptionValueParameter o : options) {
-            optionsLongOpt.add(o.getOption().getLongOpt());
-        }
-        return optionsLongOpt;
     }
 
     public String getValue(String key) {
