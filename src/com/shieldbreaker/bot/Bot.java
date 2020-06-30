@@ -3,8 +3,6 @@ package com.shieldbreaker.bot;
 import com.shieldbreaker.cli.ParametersManager;
 import com.shieldbreaker.kernel.ShieldBreaker;
 
-import java.util.List;
-
 public abstract class Bot implements Runnable {
     protected final ShieldBreaker shieldBreaker;
     protected final ParametersManager parametersManager;

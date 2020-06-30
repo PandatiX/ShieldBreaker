@@ -3,11 +3,8 @@ package com.shieldbreaker.bot;
 import com.shieldbreaker.cli.ParametersManager;
 import com.shieldbreaker.kernel.ShieldBreaker;
 
-import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 

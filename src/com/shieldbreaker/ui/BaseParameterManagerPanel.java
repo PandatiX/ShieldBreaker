@@ -3,17 +3,10 @@ package com.shieldbreaker.ui;
 import com.shieldbreaker.cli.BaseParametersManager;
 import com.shieldbreaker.cli.OptionValueParameter;
 import com.shieldbreaker.cli.ParametersManager;
-import com.shieldbreaker.cli.type.BaseType;
-import com.shieldbreaker.cli.type.FileChooserType;
-import com.shieldbreaker.cli.type.TextFieldType;
-import com.shieldbreaker.kernel.ShieldBreaker;
 import org.apache.commons.cli.Option;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

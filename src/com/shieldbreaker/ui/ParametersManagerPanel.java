@@ -3,9 +3,7 @@ package com.shieldbreaker.ui;
 import com.shieldbreaker.cli.ParametersManager;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
 
 public class ParametersManagerPanel extends JPanel {
 
@@ -37,24 +35,6 @@ public class ParametersManagerPanel extends JPanel {
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-
-//        final JButton buttonFileChooser = new JButton("FileChooser");
-//        c.gridx = 1;
-//        c.gridy = 4;
-//        buttonFileChooser.addActionListener(actionEvent -> {
-//            JFileChooser jfc = new JFileChooser(System.getProperty("user.dir"));
-//            //Set default file name
-//            jfc.setSelectedFile(new File(parametersManager.getPASSLIST()));
-//            //Setup filter for TXT files
-//            jfc.setAcceptAllFileFilterUsed(false);
-//            jfc.addChoosableFileFilter(new FileNameExtensionFilter("TXT files", "txt"));
-//            //Select file
-//            if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-//                //Save file path
-//                parametersManager.setPASSLIST(jfc.getSelectedFile().getPath());
-//            }
-//        });
-//        add(buttonFileChooser, c);
 
         //NbThreads
         final JLabel labelNbThreads = com.shieldbreaker.ui.UIManager.createCenteredJLabel("NbThreads");
