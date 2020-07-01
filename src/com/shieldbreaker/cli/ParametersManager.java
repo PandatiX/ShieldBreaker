@@ -7,9 +7,11 @@ import org.apache.commons.cli.*;
 import java.util.*;
 
 public class ParametersManager {
-    public enum KEYS {
-        NO_KEY,
-        GUI_KEY
+    public enum TYPE {
+        TEXT_FIELD,
+        RADIO_FIELD,
+        FILE_CHOOSER_FIELD_MONOSEL,
+        FILE_CHOOSER_FIELD_MULTISEL
     }
     private static final String graphicalMessage = ShieldBreaker.YELLOW + "\nIf launched in graphical mode, not required." + ShieldBreaker.RESET;
     private static final int defaultNbThreads = 1;
@@ -41,8 +43,8 @@ public class ParametersManager {
         String key;
         for (OptionValueParameter opt : ovp) {
             o = opt.getOption();
-            //Check for GUI_KEY in options
-            if (opt.getParameterKey().equals(KEYS.GUI_KEY)) {
+            //Check if required and started in the GUI
+            if (o.isRequired()) {
                 o.setDescription(o.getDescription() + graphicalMessage);
                 o.setRequired(!GUI);
             }

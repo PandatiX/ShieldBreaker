@@ -3,6 +3,7 @@ package com.shieldbreaker.ui;
 import com.shieldbreaker.cli.BaseParametersManager;
 import com.shieldbreaker.cli.OptionValueParameter;
 import com.shieldbreaker.cli.ParametersManager;
+import com.shieldbreaker.cli.type.BaseType;
 import org.apache.commons.cli.Option;
 
 import javax.swing.*;
@@ -70,49 +71,30 @@ public class BaseParameterManagerPanel extends JPanel {
         java.util.List<OptionValueParameter> ovt = bPM.getOptions();
         Option o;
         String longOpt;
-        JComponent component;
-        JLabel label;
+        BaseType type;
+        JComponent componentIndicator;
+        JComponent componentEfficient;
         for (OptionValueParameter _ovp : ovt) {
             o = _ovp.getOption();
             longOpt = o.getLongOpt();
+            type = _ovp.getType();
 
-            //Build label
-            label = new JLabel(camelCaseToReadable(longOpt));
-            label.setToolTipText(o.getDescription());
+            //Build indicator field
+            componentIndicator = type.getIndicatorComponent();
+            componentIndicator.setToolTipText(o.getDescription());
             c.gridx = 0;
-            add(label, c);
+            add(componentIndicator, c);
 
             //Build type field
             c.gridx = 1;
-            component = _ovp.getType().newComponent(parametersManager.getValue(longOpt));
-            add(component, c);
+            componentEfficient = type.getEfficientComponent(parametersManager.getValue(longOpt));
+            add(componentEfficient, c);
 
-            //Create the link longOpt-field
-            options.put(longOpt, component);
+            //Create the link longOpt-efficientField
+            options.put(longOpt, componentEfficient);
 
             c.gridy++;
         }
-    }
-
-    private String camelCaseToReadable(String s) {
-        StringBuilder sb = new StringBuilder();
-
-        //Set first char
-        char c = s.charAt(0);
-        sb.append(Character.toUpperCase(c));
-
-        //Set others char
-        int length = s.length();
-        for (int i = 1; i < length; i++) {
-            c = s.charAt(i);
-            if (Character.isUpperCase(c)) {
-                sb.append(" ").append(Character.toLowerCase(c));
-            } else {
-                sb.append(c);
-            }
-        }
-
-        return sb.toString();
     }
 
 }

@@ -1,9 +1,15 @@
 package com.shieldbreaker.cli;
 
 import com.shieldbreaker.cli.type.BaseType;
+import com.shieldbreaker.cli.exceptions.UnsupportedTypeException;
+import com.shieldbreaker.cli.type.FileChooserType;
+import com.shieldbreaker.cli.type.RadioFieldType;
+import com.shieldbreaker.cli.type.TextFieldType;
 import com.sun.istack.internal.NotNull;
 import org.apache.commons.cli.Option;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.*;
 
 public abstract class BaseParametersManager {
@@ -14,21 +20,44 @@ public abstract class BaseParametersManager {
     protected BaseParametersManager() {
         options = new ArrayList<>();
 
-        createCliOptions();
+        try {
+            createCliOptions();
+        } catch (UnsupportedTypeException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
-    protected void addOption(@NotNull Option o, @NotNull String defaultValue, @NotNull ParametersManager.KEYS key, @NotNull BaseType type) {
+    protected void addOption(@NotNull Option o,
+                             @NotNull String defaultValue,
+                             @NotNull ParametersManager.TYPE type,
+                             Object... params) throws UnsupportedTypeException {
         if (getOV(o.getLongOpt()) == null) {
-            options.add(new OptionValueParameter(o, defaultValue, key, type));
+
+            BaseType baseType;
+            if (type == ParametersManager.TYPE.TEXT_FIELD) {
+                baseType = new TextFieldType(o.getLongOpt());
+            } else if (type == ParametersManager.TYPE.RADIO_FIELD) {
+                ButtonGroup group = params[0] instanceof ButtonGroup ? (ButtonGroup)params[0] : new ButtonGroup();
+                baseType = new RadioFieldType(group, o.getLongOpt());
+            } else if (type == ParametersManager.TYPE.FILE_CHOOSER_FIELD_MONOSEL) {
+                baseType = new FileChooserType(false, o.getLongOpt(), getFilter(params[0]));
+            } else if (type == ParametersManager.TYPE.FILE_CHOOSER_FIELD_MULTISEL) {
+                baseType = new FileChooserType(true, o.getLongOpt(), getFilter(params[0]));
+            } else
+                throw new UnsupportedTypeException();
+
+            options.add(new OptionValueParameter(o, defaultValue, baseType));
         } else
             throw new IllegalArgumentException();
     }
 
-    protected void addOption(Option o, ParametersManager.KEYS key, BaseType type) {
-        addOption(o, "", key, type);
+    protected void addOption(Option o,
+                             ParametersManager.TYPE type,
+                             Object... params) throws UnsupportedTypeException {
+        addOption(o, "", type, params);
     }
 
-    protected abstract void createCliOptions();
+    protected abstract void createCliOptions() throws UnsupportedTypeException;
     protected abstract void checkParameters() throws Exception;
 
     private OptionValueParameter getOV(@NotNull String key) {
@@ -38,6 +67,9 @@ public abstract class BaseParametersManager {
             }
         }
         return null;
+    }
+    private FileNameExtensionFilter getFilter(Object param) {
+        return param instanceof FileNameExtensionFilter ? (FileNameExtensionFilter)param : null;
     }
 
     public List<OptionValueParameter> getOptions() {
