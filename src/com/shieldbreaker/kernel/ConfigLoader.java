@@ -2,29 +2,32 @@ package com.shieldbreaker.kernel;
 
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigLoader {
-    private static final String configFilePath = "config.yaml";
-    private static ConfigLoader singleton;
+    public static final String CONFIG_FILE_PATH = "config.yaml";
+    public static final String defaultPluginsDirectory = "plugins/";
+    public static final String defaultVersion = "BETA";
 
     private final String pluginsDirectory;
     private final String version;
 
-    private ConfigLoader() {
+    public ConfigLoader() {
         Yaml yaml = new Yaml();
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFilePath);
-        Map<String, String> obj = yaml.load(inputStream);
 
-        pluginsDirectory = obj.getOrDefault("pluginsDirectory", "plugins/");
-        version = obj.getOrDefault("version", "");
-    }
+        Map<String, String> obj = new HashMap<>();
+        try {
+            obj = yaml.load(new FileInputStream(new File(CONFIG_FILE_PATH)));
+        } catch (IOException ignored) {
+            System.err.println("Failed to open config file (" + CONFIG_FILE_PATH + ").");
+        }
 
-    public static ConfigLoader getInstance() {
-        if (singleton == null)
-            singleton = new ConfigLoader();
-        return singleton;
+        pluginsDirectory = obj.getOrDefault("pluginsDirectory", defaultPluginsDirectory);
+        version = obj.getOrDefault("version", defaultVersion);
     }
 
     public String getPluginsDirectory() {
@@ -33,5 +36,4 @@ public class ConfigLoader {
     public String getVersion() {
         return version;
     }
-
 }

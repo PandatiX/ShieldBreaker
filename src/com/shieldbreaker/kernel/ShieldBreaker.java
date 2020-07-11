@@ -34,7 +34,7 @@ public class ShieldBreaker {
     }
 
     private ShieldBreaker(String[] args) {
-        configLoader = ConfigLoader.getInstance();
+        configLoader = new ConfigLoader();
 
         System.out.println(LOGO + "\nThe ShieldBreaker is a POC of a plugin-based framework to simplify attacks simulations.\nVersion: " + configLoader.getVersion());
 
