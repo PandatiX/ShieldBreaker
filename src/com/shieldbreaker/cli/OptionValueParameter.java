@@ -28,4 +28,13 @@ public class OptionValueParameter {
     public void setValue(@NotNull String value) {
         this.value = value;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        else return this.getClass() == other.getClass()
+                && o.equals(((OptionValueParameter) other).o)
+                && value.equals(((OptionValueParameter) other).value);
+    }
 }

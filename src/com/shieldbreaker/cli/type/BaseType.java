@@ -11,9 +11,6 @@ public abstract class BaseType {
     public JComponent getIndicatorComponent() {
         return indicatorComponent;
     }
-    public JComponent getEfficientComponent() {
-        return efficientComponent;
-    }
     public JComponent getEfficientComponent(String defaultValue) {
         setEfficientDefaultValue(defaultValue);
         return efficientComponent;
@@ -39,5 +36,14 @@ public abstract class BaseType {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        else return this.getClass() == other.getClass()
+                && indicatorComponent.getClass() == ((BaseType) other).indicatorComponent.getClass()
+                && efficientComponent.getClass() == ((BaseType) other).efficientComponent.getClass();
     }
 }

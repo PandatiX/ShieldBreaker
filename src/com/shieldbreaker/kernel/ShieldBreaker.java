@@ -62,6 +62,9 @@ public class ShieldBreaker {
     public static ShieldBreaker getInstance() {
         return singleton;
     }
+    public ConfigLoader getConfigLoader() {
+        return configLoader;
+    }
 
     public void startApp() {
         if (GUI) {
