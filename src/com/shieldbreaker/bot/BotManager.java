@@ -37,17 +37,14 @@ public abstract class BotManager {
         try {
             semaphoreBots.acquire();
             bots = new BotThread[nbBots];
-            //bots = new ArrayList<>();
-        } catch (InterruptedException e) {
-            System.out.println("1");
+        } catch (InterruptedException ignored) {
         } finally {
             semaphoreBots.release();
         }
         try {
             semaphoreFound.acquire();
             found = false;
-        } catch (InterruptedException e) {
-            System.out.println("2");
+        } catch (InterruptedException ignored) {
         } finally {
             semaphoreFound.release();
         }
