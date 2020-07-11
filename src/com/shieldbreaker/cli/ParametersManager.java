@@ -19,8 +19,8 @@ public class ParametersManager {
     private final boolean GUI;
     private final String[] args;
     private final Options options;
-    private final List<BaseParametersManager> parametersManagers;
 
+    private BaseParametersManager pluginParametersManager;
     private int NBTHREADS;
 
     public ParametersManager(String[] args, boolean GUI) {
@@ -28,14 +28,10 @@ public class ParametersManager {
         this.GUI = GUI;
 
         options = new Options();
-        parametersManagers = new ArrayList<>();
     }
 
-    public void addParametersManager(@NotNull BaseParametersManager parametersManager) {
-        if (!parametersManagers.contains(parametersManager)) {
-            parametersManagers.add(parametersManager);
-        } else
-            throw new IllegalArgumentException();
+    public void setPluginParametersManager(@NotNull BaseParametersManager pluginParametersManager) {
+        this.pluginParametersManager = pluginParametersManager;
     }
 
     private void addOptions(List<OptionValueParameter> ovp) {
@@ -59,10 +55,10 @@ public class ParametersManager {
     }
 
     public void parseArgs() {
+        assert pluginParametersManager != null;
+
         //Build children
-        for (BaseParametersManager p : parametersManagers) {
-            addOptions(p.getOptions());
-        }
+        addOptions(pluginParametersManager.getOptions());
 
         //Set default options
         Option help = new Option("h", "help", false, "Display help.");
@@ -95,14 +91,10 @@ public class ParametersManager {
 
             //Set all parameters
             setNBTHREADS(cmd.getOptionValue("threads", Integer.toString(defaultNbThreads)));
-            List<String> keys;
-            for (BaseParametersManager p : parametersManagers) {
-                keys = p.getKeys();
-                for (String key : keys) {
-                    p.setValue(key, cmd.getOptionValue(key, ""));
-                }
+            List<String> keys = pluginParametersManager.getKeys();
+            for (String key : keys) {
+                pluginParametersManager.setValue(key, cmd.getOptionValue(key, ""));
             }
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -116,13 +108,10 @@ public class ParametersManager {
     public int getNBTHREADS() {
         return NBTHREADS;
     }
-    public String getValue(@NotNull String key) {
-        for (BaseParametersManager bp : parametersManagers) {
-            try {
-                return bp.getValue(key);
-            } catch (IllegalArgumentException ignored) {}
-        }
-        throw new IllegalArgumentException();
+
+    public String getValue(String key) {
+        assert pluginParametersManager != null;
+        return pluginParametersManager.getValue(key);
     }
 
     public void setNBTHREADS(String nbthreads) {
@@ -132,19 +121,18 @@ public class ParametersManager {
         NBTHREADS = (nbthreads > 0 ? nbthreads : defaultNbThreads);
     }
     public void setValue(String key, String value) throws IllegalArgumentException {
-        for (BaseParametersManager bp : parametersManagers) {
-            try {
-                bp.setValue(key, value);
-                return;
-            } catch (IllegalArgumentException ignored) {}
-        }
-        throw new IllegalArgumentException();
+        assert pluginParametersManager != null;
+        pluginParametersManager.setValue(key, value);
+    }
+    public void checkParameters() throws Exception {
+        assert pluginParametersManager != null;
+        pluginParametersManager.checkParameters();
     }
 
-    public void checkParameters() throws Exception {
-        //Check for plugins parameters
-        for (BaseParametersManager p : parametersManagers) {
-            p.checkParameters();
-        }
+    public enum TYPE {
+        TEXT_FIELD,
+        RADIO_FIELD,
+        FILE_CHOOSER_FIELD_MONOSEL,
+        FILE_CHOOSER_FIELD_MULTISEL
     }
 }

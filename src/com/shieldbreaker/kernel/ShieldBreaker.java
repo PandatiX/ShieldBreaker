@@ -23,7 +23,6 @@ public class ShieldBreaker {
     private final ConfigLoader configLoader;
     private final boolean GUI;
 
-    private List<BasePlugin> plugins;
     private BasePlugin plugin;
     private ParametersManager parametersManager;
     private UIManager uiManager;
@@ -207,7 +206,7 @@ public class ShieldBreaker {
     private void loadParametersManagers(String[] args) {
         parametersManager = new ParametersManager(args, GUI);
         try {
-            parametersManager.addParametersManager(plugin.getClassParametersManager().newInstance());
+            parametersManager.setPluginParametersManager(plugin.getClassParametersManager().newInstance());
         } catch (IllegalAccessException | InstantiationException ignored) {
             System.err.println("Failed to load plugin " + plugin.getName());
         }
