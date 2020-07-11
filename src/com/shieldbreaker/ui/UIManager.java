@@ -1,7 +1,6 @@
 package com.shieldbreaker.ui;
 
 import com.shieldbreaker.cli.BaseParametersManager;
-import com.shieldbreaker.kernel.ConfigLoader;
 import com.shieldbreaker.kernel.ShieldBreaker;
 import com.sun.istack.internal.NotNull;
 import com.shieldbreaker.cli.ParametersManager;
@@ -11,7 +10,7 @@ import java.awt.*;
 import java.lang.reflect.Field;
 
 public class UIManager extends JFrame {
-    public static final String NAME = "ShieldBreaker (" + ConfigLoader.getInstance().getVersion() + ")";
+    public static final String NAME = "ShieldBreaker (" + ShieldBreaker.getInstance().getConfigLoader().getVersion() + ")";
 
     private final ShieldBreaker parent;
     private final ParametersManager parametersManager;
