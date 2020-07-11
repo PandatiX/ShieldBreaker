@@ -30,7 +30,7 @@ public abstract class BaseParametersManager {
     protected void addOption(@NotNull Option o,
                              @NotNull String defaultValue,
                              @NotNull ParametersManager.TYPE type,
-                             Object... params) throws UnsupportedTypeException {
+                             Object... params) throws UnsupportedTypeException, IllegalArgumentException {
         if (getOV(o.getLongOpt()) == null) {
 
             BaseType baseType;
