@@ -52,16 +52,20 @@ public class UIManager extends JFrame {
         Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(this, message);
     }
+    public void errorDialogMessage(String message) {
+        dialogMessage("[ERROR] " + message + "\nCannot finish.");
+    }
 
     public UITerminal getTerminal() {
         return terminal;
     }
 
-    public void errorDialogMessage(String message) {
-        dialogMessage("[ERROR] " + message + "\nCannot finish.");
+    public void openTerminal() {
+        if (terminal != null)
+            terminal.close();
+        terminal = new UITerminal( this);
     }
-
-    public void terminalIsClosed() {
+    public void closeTerminal() {
         terminal = null;
     }
 
@@ -98,9 +102,8 @@ public class UIManager extends JFrame {
             parametersManager.setNBTHREADS(parametersManagerPanel.getNbThreads());
             bPMP.setValues();
 
-            if (terminal != null)
-                terminal.close();
-            terminal = new UITerminal( this);
+            openTerminal();
+
             parent.startBotManager();
         });
         add(start, c);
