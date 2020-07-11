@@ -151,19 +151,20 @@ public class ShieldBreaker {
                 pluginsLoader.setFiles(filesPath);
             }
         } else {
-            System.err.println("Directory \"plugins\" is not a directory. Cannot go further.");
+            System.err.println("Directory " + f.getPath() + " is not a directory. Cannot go further.");
             System.exit(1);
         }
 
+        List<BasePlugin> plugins;
         try {
             plugins = pluginsLoader.loadPlugins();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            plugins = new ArrayList<>();
         }
 
         //Choose the plugin to work with in all the detected ones
         int pluginsSize = plugins.size();
-        if (pluginsSize == 0) {            //NO PLUGIN TO LOAD
+        if (pluginsSize == 0) {             //NO PLUGIN TO LOAD
             System.err.println("No plugin found to work with. Cannot go further.");
             System.exit(1);
         } else if (pluginsSize == 1) {      //ONE PLUGIN TO LOAD
@@ -212,5 +213,4 @@ public class ShieldBreaker {
         }
         parametersManager.parseArgs();
     }
-
 }
