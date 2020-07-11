@@ -5,21 +5,26 @@ import com.shieldbreaker.kernel.ShieldBreaker;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public abstract class BotManager {
     protected final ShieldBreaker shieldBreaker;
     protected final ParametersManager parametersManager;
 
-    protected List<Bot> bots;
+    protected BotThread[] bots;
+    private final Semaphore semaphoreBots;
     private volatile boolean found;
+    private final Semaphore semaphoreFound;
     private int progressMax;
     private volatile int doneProgress;
 
     public BotManager() {
         shieldBreaker = ShieldBreaker.getInstance();
         parametersManager = shieldBreaker.getParametersManager();
+        semaphoreBots = new Semaphore(1);
+        semaphoreFound = new Semaphore(1);
+
+        progressMax = 1;
     }
 
     public abstract void displayStart();
@@ -27,12 +32,26 @@ public abstract class BotManager {
     public void startBots(Class<? extends Bot> botClass) {
         displayStart();
 
-        System.out.println("SPY2");
-
-        bots = new ArrayList<>();
-        found = false;
-
         int nbBots = parametersManager.getNBTHREADS();
+
+        try {
+            semaphoreBots.acquire();
+            bots = new BotThread[nbBots];
+            //bots = new ArrayList<>();
+        } catch (InterruptedException e) {
+            System.out.println("1");
+        } finally {
+            semaphoreBots.release();
+        }
+        try {
+            semaphoreFound.acquire();
+            found = false;
+        } catch (InterruptedException e) {
+            System.out.println("2");
+        } finally {
+            semaphoreFound.release();
+        }
+
         try {
             for (int i = 0; i < nbBots; i++) {
                 startBot(botClass);
@@ -49,9 +68,52 @@ public abstract class BotManager {
     }
 
     public void setFound(boolean found) {
-        this.found = found;
-        if (found)
-            doneProgress = progressMax;
+        //Check if the calling thread is one of the bot
+        Thread currThread = Thread.currentThread();
+        try {
+            semaphoreBots.acquire();
+            for (BotThread botThread : bots) {
+                if (!currThread.equals(botThread.getThread())) {
+                    return;
+                }
+            }
+        } catch (InterruptedException ignored) {
+        } finally {
+            semaphoreBots.release();
+        }
+
+        try {
+            semaphoreFound.acquire();
+            this.found = found;
+            if (found) {
+                doneProgress = progressMax;
+                //Join all threads
+                try {
+                    semaphoreBots.acquire();
+                    BotThread botThread;
+                    for (int i = 0; i < bots.length; i++) {
+                        botThread = bots[i];
+                        try {
+                            if (currThread.equals(botThread.getThread())) {
+                                //TODO find a way to join this thread: can't join his own thread
+                            } else {
+                                botThread.getThread().join();
+                            }
+                        } catch (InterruptedException e) {
+                            System.err.println("Failed to join " + botThread.getBot().getClass() + ".");
+                        } finally {
+                            bots[i] = null;
+                        }
+                    }
+                } catch (InterruptedException ignored) {
+                } finally {
+                    semaphoreBots.release();
+                }
+            }
+        } catch (InterruptedException ignored) {
+        } finally {
+            semaphoreFound.release();
+        }
     }
 
     public synchronized void doneCheck() {
@@ -60,20 +122,33 @@ public abstract class BotManager {
             shieldBreaker.out("Finished running", ShieldBreaker.OUT_PRIORITY.IMPORTANT);
     }
 
-    public boolean isFound() {
+    public synchronized boolean isFound() {
         return found;
     }
 
     public int getProgress() {
-        return 100 * doneProgress / progressMax;
+        return progressMax == 0 ? 0 : 100 * doneProgress / progressMax;
     }
 
     protected Bot startBot(Class<? extends Bot> botClass) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         Constructor<? extends Bot> constructor = botClass.getDeclaredConstructor(BotManager.class);
         constructor.setAccessible(true);
         Bot bot = constructor.newInstance(this);
-        this.bots.add(bot);
-        new Thread(bot).start();
+        Thread thread = new Thread(bot);
+        try {
+            semaphoreBots.acquire();
+            //Add the new BotThread
+            for (int i = 0; i < bots.length; i++) {
+                if (bots[i] == null) {
+                    bots[i] = new BotThread(bot, thread);
+                    break;
+                }
+            }
+        } catch (InterruptedException ignored) {
+        } finally {
+            semaphoreBots.release();
+        }
+        thread.start();
         return bot;
     }
 }
