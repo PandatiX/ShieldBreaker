@@ -7,14 +7,8 @@ import org.apache.commons.cli.*;
 import java.util.*;
 
 public class ParametersManager {
-    public enum TYPE {
-        TEXT_FIELD,
-        RADIO_FIELD,
-        FILE_CHOOSER_FIELD_MONOSEL,
-        FILE_CHOOSER_FIELD_MULTISEL
-    }
-    private static final String graphicalMessage = ShieldBreaker.YELLOW + "\nIf launched in graphical mode, not required." + ShieldBreaker.RESET;
     private static final int defaultNbThreads = 1;
+    private static final String graphicalMessage = ShieldBreaker.YELLOW + "\nIf launched in graphical mode, not required." + ShieldBreaker.RESET;
 
     private final boolean GUI;
     private final String[] args;
@@ -27,6 +21,8 @@ public class ParametersManager {
         this.args = args;
         this.GUI = GUI;
 
+        NBTHREADS = defaultNbThreads;
+
         options = new Options();
     }
 
@@ -34,7 +30,7 @@ public class ParametersManager {
         this.pluginParametersManager = pluginParametersManager;
     }
 
-    private void addOptions(List<OptionValueParameter> ovp) {
+    private void addOptions(@NotNull List<OptionValueParameter> ovp) {
         Option o;
         String key;
         for (OptionValueParameter opt : ovp) {
@@ -62,16 +58,13 @@ public class ParametersManager {
 
         //Set default options
         Option help = new Option("h", "help", false, "Display help.");
-        help.setRequired(false);
         options.addOption(help);
 
         Option threads = new Option("t", "threads", true, "Set the number of (JAVA) threads to work on. Default is 1.");
         threads.setArgName("n");
-        threads.setRequired(false);
         options.addOption(threads);
 
         Option graphical = new Option("g", "graphical", false, "Start GUI.");
-        graphical.setRequired(false);
         options.addOption(graphical);
 
         CommandLineParser parser = new DefaultParser();
@@ -113,7 +106,6 @@ public class ParametersManager {
         assert pluginParametersManager != null;
         return pluginParametersManager.getValue(key);
     }
-
     public void setNBTHREADS(String nbthreads) {
         setNBTHREADS(nbthreads.matches("\\d+") ? Integer.parseInt(nbthreads) : defaultNbThreads);
     }
