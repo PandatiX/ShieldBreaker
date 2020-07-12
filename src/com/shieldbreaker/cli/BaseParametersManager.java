@@ -34,17 +34,23 @@ public abstract class BaseParametersManager {
         if (getOV(o.getLongOpt()) == null) {
 
             BaseType baseType;
-            if (type == ParametersManager.TYPE.TEXT_FIELD) {
-                baseType = new TextFieldType(o.getLongOpt());
-            } else if (type == ParametersManager.TYPE.RADIO_FIELD) {
-                ButtonGroup group = params[0] instanceof ButtonGroup ? (ButtonGroup)params[0] : new ButtonGroup();
-                baseType = new RadioFieldType(group, o.getLongOpt());
-            } else if (type == ParametersManager.TYPE.FILE_CHOOSER_FIELD_MONOSEL) {
-                baseType = new FileChooserType(false, o.getLongOpt(), getFilter(params[0]));
-            } else if (type == ParametersManager.TYPE.FILE_CHOOSER_FIELD_MULTISEL) {
-                baseType = new FileChooserType(true, o.getLongOpt(), getFilter(params[0]));
-            } else
-                throw new UnsupportedTypeException();
+            switch (type) {
+                case TEXT_FIELD:
+                    baseType = new TextFieldType(o.getLongOpt());
+                    break;
+                case RADIO_FIELD:
+                    ButtonGroup group = params[0] instanceof ButtonGroup ? (ButtonGroup)params[0] : new ButtonGroup();
+                    baseType = new RadioFieldType(group, o.getLongOpt());
+                    break;
+                case FILE_CHOOSER_FIELD_MONOSEL:
+                    baseType = new FileChooserType(false, o.getLongOpt(), getFilter(params[0]));
+                    break;
+                case FILE_CHOOSER_FIELD_MULTISEL:
+                    baseType = new FileChooserType(true, o.getLongOpt(), getFilter(params[0]));
+                    break;
+                default:
+                    throw new UnsupportedTypeException();
+            }
 
             options.add(new OptionValueParameter(o, defaultValue, baseType));
         } else
