@@ -6,8 +6,6 @@ import com.shieldbreaker.cli.exceptions.UnsupportedTypeException;
 import com.shieldbreaker.kernel.BasePlugin;
 import org.apache.commons.cli.Option;
 
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Semaphore;
 
 public class DemoPlugin implements BasePlugin {
@@ -25,14 +23,14 @@ public class DemoPlugin implements BasePlugin {
         }
         private SIGNAL signal;
         private final Semaphore signalSemaphore;
-        public final CyclicBarrier actionDoneBarrier;
+        private final Semaphore actionSemaphore;
 
         public DemoBot(BotManager manager) {
             super(manager);
 
             signal = SIGNAL.NULL;
             signalSemaphore = new Semaphore(1);
-            actionDoneBarrier = new CyclicBarrier(2);
+            actionSemaphore = new Semaphore(0);
         }
         @Override
         public void run() {
@@ -44,10 +42,7 @@ public class DemoPlugin implements BasePlugin {
                             return;
                         case SET_FOUND_TRUE:
                             manager.setFound(true);
-                            if (actionDoneBarrier != null)
-                                try {
-                                    actionDoneBarrier.await();
-                                } catch (InterruptedException | BrokenBarrierException ignored) {}
+                            actionSemaphore.release();
                             signal = SIGNAL.NULL;
                             break;
                         case NULL:
@@ -69,6 +64,9 @@ public class DemoPlugin implements BasePlugin {
             } finally {
                 signalSemaphore.release();
             }
+        }
+        public void acquire() throws InterruptedException {
+            actionSemaphore.acquire();
         }
     }
     public static class DemoBotManager extends BotManager {

@@ -5,8 +5,6 @@ import com.shieldbreaker.kernel.ShieldBreaker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.BrokenBarrierException;
-
 class BotManagerTest {
     private final BenchTest benchTest;
 
@@ -78,15 +76,17 @@ class BotManagerTest {
 
         //Test for a not granted thread
         demoBM.setFound(true);
+
         Assertions.assertFalse(demoBM.isFound());
         Assertions.assertEquals(0, demoBM.getProgress());
 
         //Test for granted thread
+        DemoPlugin.DemoBot bot = (DemoPlugin.DemoBot)demoBM.bots[0].getBot();
+        bot.setSignal(DemoPlugin.DemoBot.SIGNAL.SET_FOUND_TRUE);  //Send signal to bot (on his thread) to set the found value
         try {
-            DemoPlugin.DemoBot bot = (DemoPlugin.DemoBot)demoBM.bots[0].getBot();
-            bot.setSignal(DemoPlugin.DemoBot.SIGNAL.SET_FOUND_TRUE);  //Send signal to bot (on his thread) to set the found value
-            bot.actionDoneBarrier.await();
-        } catch (InterruptedException | BrokenBarrierException ignored) {}
+            bot.acquire();
+        } catch (InterruptedException ignored) {}
+
         Assertions.assertTrue(demoBM.isFound());
         Assertions.assertEquals(100, demoBM.getProgress());
         Assertions.assertArrayEquals(new BotThread[demoBM.bots.length], demoBM.bots);   //bots are joined and set to null
