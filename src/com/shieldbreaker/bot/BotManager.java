@@ -199,6 +199,7 @@ public abstract class BotManager {
             //Add the new BotThread
             for (int i = 0; i < bots.length; i++) {
                 if (bots[i] == null) {
+                    thread.setName("Bot " + i);
                     bots[i] = new BotThread(bot, thread);
                     break;
                 }

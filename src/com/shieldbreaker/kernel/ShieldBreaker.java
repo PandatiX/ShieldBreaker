@@ -235,7 +235,9 @@ public class ShieldBreaker {
             if (GUI) {
                 try {
                     UIPluginChoice pluginChoice = new UIPluginChoice(plugins);
-                    new Thread(pluginChoice).start();
+                    Thread thread = new Thread(pluginChoice);
+                    thread.setName("PluginChoice");
+                    thread.start();
                     plugin = plugins.get(pluginChoice.getIndexSelectedPlugin());
                 } catch (InterruptedException e) {
                     System.err.println("An error occurred while selecting the plugin to work with. Automatically choosing the 1st plugin");
