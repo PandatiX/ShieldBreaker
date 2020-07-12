@@ -6,26 +6,40 @@ import org.apache.commons.cli.*;
 
 import java.util.*;
 
+/**
+ * Class to manage all CLI parameters (kernel and plugin).
+ */
 public class ParametersManager {
-    private static final int defaultNbThreads = 1;
-    private static final String graphicalMessage = ShieldBreaker.YELLOW + "\nIf launched in graphical mode, not required." + ShieldBreaker.RESET;
+    private static final int DEFAULT_NB_THREADS = 1;
+    private static final String GRAPHICAL_MESSAGE = ShieldBreaker.YELLOW + "\nIf launched in graphical mode, not required." + ShieldBreaker.RESET;
 
     private final boolean GUI;
     private final String[] args;
     private final Options options;
 
     private BaseParametersManager pluginParametersManager;
-    private int NBTHREADS;
+    private int nbThreads;
 
+    /**
+     * The constructor.
+     *
+     * @param args CLI arguments.
+     * @param GUI works in the GUI mode.
+     */
     public ParametersManager(String[] args, boolean GUI) {
         this.args = args;
         this.GUI = GUI;
 
-        NBTHREADS = defaultNbThreads;
+        nbThreads = DEFAULT_NB_THREADS;
 
         options = new Options();
     }
 
+    /**
+     * Set the plugin parameters manager.
+     *
+     * @param pluginParametersManager the plugin parameters manager.
+     */
     public void setPluginParametersManager(@NotNull BaseParametersManager pluginParametersManager) {
         this.pluginParametersManager = pluginParametersManager;
     }
@@ -37,7 +51,7 @@ public class ParametersManager {
             o = opt.getOption();
             //Check if required and started in the GUI
             if (o.isRequired()) {
-                o.setDescription(o.getDescription() + graphicalMessage);
+                o.setDescription(o.getDescription() + GRAPHICAL_MESSAGE);
                 o.setRequired(!GUI);
             }
             //Add option to known ones
@@ -50,6 +64,9 @@ public class ParametersManager {
         }
     }
 
+    /**
+     * Parse CLI arguments.
+     */
     public void parseArgs() {
         assert pluginParametersManager != null;
 
@@ -83,7 +100,7 @@ public class ParametersManager {
             cmd = parser.parse(options, args);
 
             //Set all parameters
-            setNBTHREADS(cmd.getOptionValue("threads", Integer.toString(defaultNbThreads)));
+            setNbThreads(cmd.getOptionValue("threads", Integer.toString(DEFAULT_NB_THREADS)));
             List<String> keys = pluginParametersManager.getKeys();
             for (String key : keys) {
                 pluginParametersManager.setValue(key, cmd.getOptionValue(key, ""));
@@ -98,29 +115,71 @@ public class ParametersManager {
         formatter.printHelp("ShieldBreaker", "\n", options, footer, true);
     }
 
-    public int getNBTHREADS() {
-        return NBTHREADS;
+    /**
+     * Get number of threads.
+     *
+     * @return the number of threads.
+     */
+    public int getNbThreads() {
+        return nbThreads;
     }
 
+    /**
+     * Get the value from the plugin.
+     *
+     * @param key the plugin's options longOpt to get the value.
+     *
+     * @return the value of the plugin's option.
+     */
     public String getValue(String key) {
         assert pluginParametersManager != null;
         return pluginParametersManager.getValue(key);
     }
-    public void setNBTHREADS(String nbthreads) {
-        setNBTHREADS(nbthreads.matches("\\d+") ? Integer.parseInt(nbthreads) : defaultNbThreads);
+
+    /**
+     * Set the number of threads.
+     *
+     * @param nbthreads the number of threads.
+     */
+    public void setNbThreads(String nbthreads) {
+        setNBTHREADS(nbthreads.matches("\\d+") ? Integer.parseInt(nbthreads) : DEFAULT_NB_THREADS);
     }
+
+    /**
+     * Set the number of threads.
+     *
+     * @param nbthreads the number of threads.
+     */
     public void setNBTHREADS(int nbthreads) {
-        NBTHREADS = (nbthreads > 0 ? nbthreads : defaultNbThreads);
+        nbThreads = (nbthreads > 0 ? nbthreads : DEFAULT_NB_THREADS);
     }
+
+    /**
+     * Set the plugin's option value.
+     *
+     * @param key the plugin's option longOpt.
+     * @param value the plugin's option value.
+     *
+     * @throws IllegalArgumentException failed to get the key's OptionValueParameter.
+     */
     public void setValue(String key, String value) throws IllegalArgumentException {
         assert pluginParametersManager != null;
         pluginParametersManager.setValue(key, value);
     }
+
+    /**
+     * Check parameters.
+     *
+     * @throws Exception failed to fulfill options conditions.
+     */
     public void checkParameters() throws Exception {
         assert pluginParametersManager != null;
         pluginParametersManager.checkParameters();
     }
 
+    /**
+     * GUI type.
+     */
     public enum TYPE {
         TEXT_FIELD,
         RADIO_FIELD,

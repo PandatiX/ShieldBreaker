@@ -8,6 +8,9 @@ import com.shieldbreaker.ui.UITerminal;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Main class to rule them all.
+ */
 public class ShieldBreaker {
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
@@ -27,6 +30,9 @@ public class ShieldBreaker {
     private ParametersManager parametersManager;
     private UIManager uiManager;
 
+    /**
+     * Display priority.
+     */
     public enum OUT_PRIORITY {
         IMPORTANT,
         MEDIUM,
@@ -53,19 +59,39 @@ public class ShieldBreaker {
         loadParametersManagers(args);
     }
 
+    /**
+     * Create the ShieldBreaker instance (DP Singleton).
+     *
+     * @param args CLI arguments.
+     *
+     * @return the ShieldBreaker instance.
+     */
     public static ShieldBreaker createInstance(String[] args) {
         if (singleton == null)
             singleton = new ShieldBreaker(args);
         return singleton;
     }
 
+    /**
+     * Get the ShieldBreaker instance.
+     *
+     * @return the ShieldBreaker instance.
+     */
     public static ShieldBreaker getInstance() {
         return singleton;
     }
+
+    /**
+     * Get the ConfigLoader.
+     * @return the ConfigLoader.
+     */
     public ConfigLoader getConfigLoader() {
         return configLoader;
     }
 
+    /**
+     * Start the ShieldBreaker (in CLI or GUI mode, according to given args).
+     */
     public void startApp() {
         if (GUI) {
             uiManager = new UIManager(this);
@@ -74,6 +100,9 @@ public class ShieldBreaker {
         }
     }
 
+    /**
+     * Start the plugin bot manager.
+     */
     public void startBotManager() {
         try {
             parametersManager.checkParameters();
@@ -85,6 +114,13 @@ public class ShieldBreaker {
         }
     }
 
+    /**
+     * Display a string according to its priority, as an information.
+     * Works on a cascade style: each priority calls its inferior ones.
+     *
+     * @param s string to display.
+     * @param priority priority to display the string.
+     */
     public void out(String s, OUT_PRIORITY priority) {
         switch (priority) {
             case IMPORTANT:
@@ -102,6 +138,13 @@ public class ShieldBreaker {
         }
     }
 
+    /**
+     * Display a string according to its priority, as an error.
+     * Works on a cascade style: each priority calls its inferior ones.
+     *
+     * @param s string to display.
+     * @param priority priority to display the string.
+     */
     public void err(String s, OUT_PRIORITY priority) {
         switch (priority) {
             case IMPORTANT:
@@ -119,13 +162,29 @@ public class ShieldBreaker {
         }
     }
 
+    /**
+     * Get the plugin.
+     *
+     * @return the plugin.
+     */
     public BasePlugin getPlugin() {
         return plugin;
     }
+
+    /**
+     * Get the UI manager.
+     *
+     * @return the UI manager.
+     */
     public UIManager getUIManager() {
         return uiManager;
     }
 
+    /**
+     * Get the parameters manager.
+     *
+     * @return the parameters manager.
+     */
     public ParametersManager getParametersManager() {
         return parametersManager;
     }

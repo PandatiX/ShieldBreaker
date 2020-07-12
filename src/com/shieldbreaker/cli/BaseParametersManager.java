@@ -12,11 +12,23 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.*;
 
+/**
+ * Abstract class to create CLI options from a plugin.
+ */
 public abstract class BaseParametersManager {
+    /**
+     * Plugin options.
+     */
     protected final List<OptionValueParameter> options;
 
+    /**
+     * Plugin supported protocols.
+     */
     protected String[] supportedProtocols;
 
+    /**
+     * The plugin parameters manager constructor.
+     */
     protected BaseParametersManager() {
         options = new ArrayList<>();
 
@@ -27,6 +39,17 @@ public abstract class BaseParametersManager {
         }
     }
 
+    /**
+     * Add an option to the plugin CLI options.
+     *
+     * @param o the option.
+     * @param defaultValue the option default value.
+     * @param type the option type to dictates the GUI how to build the corresponding field.
+     * @param params the type parameters.
+     *
+     * @throws UnsupportedTypeException given type failed to match a supported type.
+     * @throws IllegalArgumentException the option is known.
+     */
     protected void addOption(@NotNull Option o,
                              @NotNull String defaultValue,
                              @NotNull ParametersManager.TYPE type,
@@ -57,13 +80,34 @@ public abstract class BaseParametersManager {
             throw new IllegalArgumentException();
     }
 
+    /**
+     * Add an option to the plugin CLI options.
+     *
+     * @param o the option.
+     * @param type the option type to dictates the GUI how to build the corresponding field.
+     * @param params the type parameters.
+     *
+     * @throws UnsupportedTypeException given type failed to match a supported type.
+     * @throws IllegalArgumentException the option is known.
+     */
     protected void addOption(Option o,
                              ParametersManager.TYPE type,
-                             Object... params) throws UnsupportedTypeException {
+                             Object... params) throws UnsupportedTypeException, IllegalArgumentException {
         addOption(o, "", type, params);
     }
 
+    /**
+     * Create CLI options.
+     *
+     * @throws UnsupportedTypeException given type failed to match a supported type.
+     */
     protected abstract void createCliOptions() throws UnsupportedTypeException;
+
+    /**
+     * Check parameters.
+     *
+     * @throws Exception failed to fulfill options conditions.
+     */
     protected abstract void checkParameters() throws Exception;
 
     private OptionValueParameter getOV(@NotNull String key) {
@@ -78,11 +122,23 @@ public abstract class BaseParametersManager {
         return param instanceof FileNameExtensionFilter ? (FileNameExtensionFilter)param : null;
     }
 
+    /**
+     * Get plugin options.
+     *
+     * @return the plugin options.
+     */
     public List<OptionValueParameter> getOptions() {
         return options;
     }
 
-    public String getValue(String key) {
+    /**
+     * Get CLI option value according to the option's longOpt.
+     *
+     * @param key the longOpt to get its CLI value.
+     *
+     * @return the CLI option value.
+     */
+    public String getValue(String key) throws IllegalArgumentException {
         OptionValueParameter o = getOV(key);
         if (o != null) {
             return o.getValue();
@@ -90,6 +146,11 @@ public abstract class BaseParametersManager {
             throw new IllegalArgumentException();
     }
 
+    /**
+     * Get plugin keys (options' longOpt).
+     *
+     * @return the plugin keys.
+     */
     public List<String> getKeys() {
         List<String> keys = new ArrayList<>();
 
@@ -100,12 +161,19 @@ public abstract class BaseParametersManager {
         return keys;
     }
 
-    public void setValue(@NotNull String key, String value) {
+    /**
+     * Set CLI options value according to the option's longOpt.
+     *
+     * @param key the longOpt to set its CLI value.
+     * @param value the value to set.
+     *
+     * @throws IllegalArgumentException failed to get the key's OptionValueParameter.
+     */
+    public void setValue(@NotNull String key, String value) throws IllegalArgumentException {
         OptionValueParameter o = getOV(key);
         if (o != null) {
             o.setValue(value);
         } else
             throw new IllegalArgumentException();
     }
-
 }

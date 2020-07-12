@@ -13,19 +13,40 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Class to load the plugins.
+ */
 public class PluginsLoader {
-    private String[] files;
-
     private final List<Class<BasePlugin>> plugins;
 
+    private String[] files;
+
+    /**
+     * The constructor.
+     */
     public PluginsLoader() {
         plugins = new ArrayList<>();
     }
 
+    /**
+     * Set files to extract plugins from.
+     *
+     * @param files the files containing the plugins.
+     */
     public void setFiles(String[] files) {
         this.files = files;
     }
 
+    /**
+     * Load the plugins from the set files.
+     *
+     * @return the plugins from the files.
+     *
+     * @throws IllegalAccessException failed to access a bot method.
+     * @throws InstantiationException failed to instantiate the bot.
+     * @throws ClassNotFoundException failed to found the plugin in files.
+     * @throws IOException
+     */
     public List<BasePlugin> loadPlugins() throws IllegalAccessException, InstantiationException, ClassNotFoundException, IOException {
         initializeLoader();
 

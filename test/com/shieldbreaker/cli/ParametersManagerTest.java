@@ -23,7 +23,7 @@ class ParametersManagerTest {
     void getNBTHREADS() {
         ParametersManager parametersManager = buildDemoParametersManager(new String[]{"-t", "5"});
 
-        Assertions.assertEquals(5, parametersManager.getNBTHREADS());
+        Assertions.assertEquals(5, parametersManager.getNbThreads());
     }
 
     @Test
@@ -37,8 +37,8 @@ class ParametersManagerTest {
     void setNBTHREADSString() {
         ParametersManager parametersManager = buildDemoParametersManager(new String[]{});
 
-        parametersManager.setNBTHREADS("2");
-        Assertions.assertEquals(2, parametersManager.getNBTHREADS());
+        parametersManager.setNbThreads("2");
+        Assertions.assertEquals(2, parametersManager.getNbThreads());
     }
 
     @Test
@@ -46,7 +46,7 @@ class ParametersManagerTest {
         ParametersManager parametersManager = buildDemoParametersManager(new String[]{});
 
         parametersManager.setNBTHREADS(2);
-        Assertions.assertEquals(2, parametersManager.getNBTHREADS());
+        Assertions.assertEquals(2, parametersManager.getNbThreads());
     }
 
     @Test

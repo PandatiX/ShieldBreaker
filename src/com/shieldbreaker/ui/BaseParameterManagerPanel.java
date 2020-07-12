@@ -13,12 +13,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Panel to display plugin options.
+ */
 public class BaseParameterManagerPanel extends JPanel {
-
     private final ParametersManager parametersManager;
     private final BaseParametersManager bPM;
     private final Map<String, JComponent> options;
 
+    /**
+     * The constructor.
+     *
+     * @param parametersManager the main parameters manager.
+     * @param bPM the plugin parameters manager.
+     */
     public BaseParameterManagerPanel(ParametersManager parametersManager, BaseParametersManager bPM) {
         super(new GridBagLayout());
 
@@ -29,6 +37,9 @@ public class BaseParameterManagerPanel extends JPanel {
         setupUI();
     }
 
+    /**
+     * Set options values.
+     */
     public void setValues() {
         Set<Map.Entry<String, JComponent>> setOptions = options.entrySet();
         Iterator<Map.Entry<String, JComponent>> it = setOptions.iterator();
@@ -96,5 +107,4 @@ public class BaseParameterManagerPanel extends JPanel {
             c.gridy++;
         }
     }
-
 }

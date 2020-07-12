@@ -6,9 +6,22 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 
+/**
+ * Class to dictates the GUI to build a FileChooser field.
+ */
 public class FileChooserType extends BaseType {
+    /**
+     * The FileChooser field JFileChooser.
+     */
     protected JFileChooser jfc;
 
+    /**
+     * The constructor to set strategy parameters.
+     *
+     * @param multiSelection can select multiple files.
+     * @param longOpt the option longOpt to display in the indicator field.
+     * @param filter the FileChooser filter.
+     */
     public FileChooserType(boolean multiSelection, String longOpt, FileNameExtensionFilter filter) {
         super();
 

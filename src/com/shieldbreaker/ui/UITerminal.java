@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * GUI to display text in a terminal.
+ */
 public class UITerminal extends JFrame {
     public static final String NAME = UIManager.NAME + " - Terminal";
 
@@ -12,6 +15,11 @@ public class UITerminal extends JFrame {
 
     private JTextArea textArea;
 
+    /**
+     * The constructor.
+     *
+     * @param parent the UI manager.
+     */
     public UITerminal(UIManager parent) {
         super(NAME);
         this.parent = parent;
@@ -19,11 +27,19 @@ public class UITerminal extends JFrame {
         setupUI();
     }
 
+    /**
+     * Display a string in the terminal.
+     *
+     * @param s the string do display.
+     */
     public void out(String s) {
         textArea.append(s + "\r\n");
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
+    /**
+     * Close the GUI terminal.
+     */
     public void close() {
         setVisible(false);
         dispose();
@@ -56,5 +72,4 @@ public class UITerminal extends JFrame {
             }
         });
     }
-
 }

@@ -9,6 +9,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+/**
+ * GUI to manage single-plugin strategy choice.
+ */
 public class UIPluginChoice extends JFrame implements Runnable {
     public static final String NAME = UIManager.NAME;
 
@@ -16,11 +19,17 @@ public class UIPluginChoice extends JFrame implements Runnable {
     private final Semaphore semaphore;
     private final java.util.List<BasePlugin> plugins;
 
+    /**
+     * The constructor.
+     *
+     * @param plugins the loaded plugins.
+     */
     public UIPluginChoice(java.util.List<BasePlugin> plugins) {
         super(NAME);
         semaphore = new Semaphore(0);
         this.plugins= plugins;
 
+        //TODO this must only be set by the UIManager
         //Setup app icon
         Toolkit kit = Toolkit.getDefaultToolkit();
         Image icon = kit.createImage(UIManager.class.getResource("/resources/images/icon.png"));
@@ -40,6 +49,13 @@ public class UIPluginChoice extends JFrame implements Runnable {
         setupUI(plugins);
     }
 
+    /**
+     * Get the selected plugin index.
+     *
+     * @return the selected plugin index.
+     *
+     * @throws InterruptedException interrupted synchronization between main and this thread.
+     */
     public int getIndexSelectedPlugin() throws InterruptedException {
         semaphore.acquire();
         return indexSelectedPlugin;

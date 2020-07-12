@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Field;
 
+/**
+ * GUI to manage options values.
+ */
 public class UIManager extends JFrame {
     public static final String NAME = "ShieldBreaker (" + ShieldBreaker.getInstance().getConfigLoader().getVersion() + ")";
 
@@ -19,6 +22,11 @@ public class UIManager extends JFrame {
     private BaseParameterManagerPanel bPMP;
     private UITerminal terminal;
 
+    /**
+     * The constructor.
+     *
+     * @param parent the ShieldBreaker instance.
+     */
     public UIManager(@NotNull ShieldBreaker parent) {
         super(NAME);
         this.parent = parent;
@@ -48,23 +56,46 @@ public class UIManager extends JFrame {
         setupUI();
     }
 
+    /**
+     * Display a popup with a message in it.
+     *
+     * @param message the message to display.
+     */
     public void dialogMessage(String message) {
         Toolkit.getDefaultToolkit().beep();
         JOptionPane.showMessageDialog(this, message);
     }
+
+    /**
+     * Display an error popup with a message in it.
+     *
+     * @param message the error message to display.
+     */
     public void errorDialogMessage(String message) {
         dialogMessage("[ERROR] " + message + "\nCannot finish.");
     }
 
+    /**
+     * Get the GUI terminal.
+     *
+     * @return the GUI terminal.
+     */
     public UITerminal getTerminal() {
         return terminal;
     }
 
+    /**
+     * Open a new GUI terminal.
+     */
     public void openTerminal() {
         if (terminal != null)
             terminal.close();
         terminal = new UITerminal( this);
     }
+
+    /**
+     * Close the GUI terminal.
+     */
     public void closeTerminal() {
         terminal = null;
     }
@@ -115,6 +146,13 @@ public class UIManager extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Get a text-centered JLabel.
+     *
+     * @param label the label.
+     *
+     * @return a text-centered JLabel.
+     */
     public static JLabel createCenteredJLabel(String label) {
         JLabel l = new JLabel(label);
         l.setHorizontalAlignment(JLabel.CENTER);

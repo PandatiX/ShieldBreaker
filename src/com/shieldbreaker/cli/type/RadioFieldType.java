@@ -4,8 +4,18 @@ import com.sun.istack.internal.NotNull;
 
 import javax.swing.*;
 
-//TODO create a strategy to build a reset JRadioButton for each group
+/**
+ * Class to dictates the GUI to build a Radio field.
+ *
+ * @todo create a strategy to build a reset JRadioButton for each group
+ */
 public class RadioFieldType extends BaseType {
+    /**
+     * The constructor to set strategy parameters.
+     *
+     * @param group the Radio group.
+     * @param indicatorName the name to display in the indicator field.
+     */
     public RadioFieldType(@NotNull ButtonGroup group, String indicatorName) {
         super();
 
